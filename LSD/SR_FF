@@ -1,0 +1,20 @@
+module SR(s, r, clk, q, qb);
+    input s, r, clk;
+    output reg q, qb;
+
+    // Initial state for q is 0
+    initial begin
+        q = 1'b0;
+    end
+
+    // Always block triggered by the positive edge of clk
+    always @(posedge clk) begin
+        case ({s, r})
+            2'b00: q = q;        // No change
+            2'b01: q = 1'b0;     // Reset
+            2'b10: q = 1'b1;     // Set
+            2'b11: q = 1'bx;     // Invalid state
+        endcase
+        qb = ~q;                // Inverted output
+    end
+endmodule
