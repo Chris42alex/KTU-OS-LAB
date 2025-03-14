@@ -1,0 +1,15 @@
+module D_FF(d, q, qb, clk);
+    input d, clk;    
+    output reg q, qb;  
+    // Always block triggered by the positive edge of clk
+    always @(posedge clk) begin
+        case ({d})  // Only one possible case for a single bit
+            1'b0: q = 0;  // If d is 0, set q to 0
+            1'b1: q = 1;  // If d is 1, set q to 1
+        endcase
+        
+        // qb is the inverse of q
+        qb = ~q;
+    end
+    
+endmodule
