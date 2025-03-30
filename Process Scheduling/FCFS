@@ -2,72 +2,71 @@
 
 int main() {
     int n;
-    float avgwt = 0, avgtat = 0;
-    int toTAT = 0, toWT = 0;
-
+    
     printf("Enter the number of processes: ");
     scanf("%d", &n);
-    int bt[n], wt[n], tat[n];
+    
+    int bt[n], wt[n], tat[n], p[n];  
+    float avgtat = 0, avgwt = 0;
 
-    // Burst Time Input
-    printf("Enter the Burst Time of each process:\n");
+    // Input Burst Time
+    printf("Enter the burst time of each process:\n");
     for (int i = 0; i < n; i++) {
-        printf("P%d: ", i + 1);
+        p[i] = i + 1;  // Store process ID
+        printf("P%d: ", p[i]);
         scanf("%d", &bt[i]);
     }
 
     // Waiting Time Calculation
-    wt[0] = 0;
+    wt[0] = 0;  // First process has no waiting time
     for (int i = 1; i < n; i++) {  
         wt[i] = wt[i - 1] + bt[i - 1];
+        avgwt += wt[i];
     }
 
     // Turnaround Time Calculation
     for (int i = 0; i < n; i++) {
-        tat[i] = bt[i] + wt[i];
+        tat[i] = wt[i] + bt[i];
+        avgtat += tat[i];
     }
-    
-     printf("\n");
-     
-    // Process Details
-    printf("PROCESS ID\tBurst Time\t\t\tWaiting Time\t\t\tTurnAround Time\n");
-    for(int i=0; i<n; i++)
-    {
-        printf("P%d:  ",i+1);
-        printf("\t\t\t%d",bt[i]);
-		printf("\t\t\t\t%d",wt[i]);
-		printf("\t\t\t\t%d", tat[i]);
-		printf("\n");
-    }
-   
-    // Total Turnaround and Waiting Time Calculation
+
+    // Average calculations
+    avgwt /= n;
+    avgtat /= n;
+
+    // Display Process Table
+    printf("\nProcess\tBT\tWT\tTAT\n");
     for (int i = 0; i < n; i++) {
-        toTAT += tat[i];
-        toWT += wt[i];
+        printf("P%d\t%d\t%d\t%d\n", p[i], bt[i], wt[i], tat[i]);
     }
 
-    avgwt = (float)toWT / n;
-    avgtat = (float)toTAT / n;
-    
-    	printf("\n");
-
-    printf("Average Turnaround Time: %f\n", avgtat);
-    printf("Average Waiting Time: %f\n", avgwt);
+    printf("\nAverage Waiting Time: %.2f", avgwt);
+    printf("\nAverage Turnaround Time: %.2f\n", avgtat);
 
     // Gantt Chart Representation
     printf("\nGantt Chart:\n");
 
-    // Print process labels
-  
+    // Print upper border
     for (int i = 0; i < n; i++) {
-        printf("  P%d   ", i + 1);
+        printf("--------");
+    }
+    printf("\n|");
+
+    // Print process execution sequence
+    for (int i = 0; i < n; i++) {
+        printf(" P%d |", p[i]);
     }
     printf("\n");
 
-    // Print time sequence
-     printf("0");
+    // Print lower border
     for (int i = 0; i < n; i++) {
-        printf("     %d", tat[i]);
+        printf("--------");
+    }
+
+    // Print time sequence
+    printf("\n0");
+    for (int i = 0; i < n; i++) {
+        printf("      %d", tat[i]);
     }
     printf("\n");
 
