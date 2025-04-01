@@ -1,0 +1,13 @@
+module tff (T, clk, q, qb);
+    input T, clk;
+    output reg q, qb;
+    
+    always @(posedge clk)
+    begin
+        case ({T})
+            1'b0: q = q;    // No change
+            1'b1: q = ~q;   // Toggle state
+        endcase
+        qb = ~q;  // Complement of q
+    end
+endmodule
