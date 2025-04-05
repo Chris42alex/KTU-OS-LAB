@@ -1,0 +1,65 @@
+#include<stdio.h>
+
+int main() {
+    int i, j, n, a[50], frame[10], no, k, avail, count = 0;
+
+    // Ask user for number of pages in the reference string
+    printf("\nEnter the number of pages: ");
+    scanf("%d", &n);
+
+    // Ask user to enter the page numbers
+    printf("Enter the page numbers: ");
+    for(i = 1; i <= n; i++) {
+        scanf("%d", &a[i]);  // Storing page reference string in array 'a'
+    }
+
+    // Ask user for the number of page frames
+    printf("\nEnter the number of frames: ");
+    scanf("%d", &no);
+
+    // Initialize all frames as empty (-1 indicates empty)
+    for(i = 0; i < no; i++) {
+        frame[i] = -1;
+    }
+
+    j = 0;  // To track the index of the frame to replace (FIFO pointer)
+
+    printf("\n Ref_String\t Page_Frames\n");
+
+    // Loop through each page in the reference string
+    for(i = 1; i <= n; i++) {
+        printf("%d\t\t", a[i]);
+
+        avail = 0;  // To check if page is already in frame (hit)
+
+        // Check if current page is already in one of the frames
+        for(k = 0; k < no; k++) {
+            if(frame[k] == a[i]) {
+                avail = 1;  // Page hit
+                break;
+            }
+        }
+
+        // If page is not available in frames → page fault
+        if(avail == 0) {
+            frame[j] = a[i];            // Replace oldest page using FIFO
+            j = (j + 1) % no;           // Move to next frame in circular manner
+            count++;                    // Increment page fault count
+
+            // Print current state of frames
+            for(k = 0; k < no; k++) {
+                if(frame[k] != -1)
+                    printf("%d\t", frame[k]);
+                else
+                    printf("-\t");     // Show empty frames
+            }
+        }
+
+        printf("\n");
+    }
+
+    // Final page fault count
+    printf("\nTotal Page Faults: %d\n", count);
+
+    return 0;
+}
