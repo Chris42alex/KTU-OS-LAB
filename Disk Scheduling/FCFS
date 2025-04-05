@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int RQ[100], i, n, TotalHeadMovement = 0, initial, movement;
+
+    printf("Enter the number of Requests:\n");
+    scanf("%d", &n);
+
+    printf("Enter the request sequence:\n");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &RQ[i]);
+    }
+
+    printf("Enter the initial head position:\n");
+    scanf("%d", &initial);
+
+    printf("\nHead movement details:\n");
+    printf("Start at: %d\n", initial);
+
+    for (i = 0; i < n; i++) {
+        movement = abs(RQ[i] - initial); // calculate difference
+        printf("Move from %d to %d [Movement = %d]\n", initial, RQ[i], movement);
+        TotalHeadMovement += movement;
+        initial = RQ[i]; // update current head position
+    }
+
+    printf("\nTotal head movement is %d\n", TotalHeadMovement);
+
+    return 0;
+}
