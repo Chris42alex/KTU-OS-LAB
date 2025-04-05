@@ -1,0 +1,106 @@
+#include <stdio.h>     // For input/output functions
+#include <stdlib.h>    // For abs() function
+
+// Function to sort an array in ascending order
+void sort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (arr[j] > arr[j + 1]) {
+                // Swap elements if they are in the wrong order
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+}
+
+int main() {
+    int RQ[100], n, head, size, dir, total = 0;
+
+    // Get number of disk requests
+    printf("Enter number of requests: ");
+    scanf("%d", &n);
+
+    // Input the request sequence
+    printf("Enter request sequence: ");
+    for (int i = 0; i < n; i++)
+        scanf("%d", &RQ[i]);
+
+    // Input initial head position
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    // Input disk size (usually like 200, meaning 0 to 199)
+    printf("Enter disk size: ");
+    scanf("%d", &size);
+
+    // Input direction (0 = left, 1 = right)
+    printf("Enter direction (0 = left, 1 = right): ");
+    scanf("%d", &dir);
+
+    // Add head, beginning (0), and end of disk (size-1) to request list
+    RQ[n++] = head;
+    RQ[n++] = 0;
+    RQ[n++] = size - 1;
+
+    // Sort the request array
+    sort(RQ, n);
+
+    // Find the index of head position in sorted array
+    int pos;
+    for (int i = 0; i < n; i++)
+        if (RQ[i] == head) {
+            pos = i;
+            break;
+        }
+
+    // Start printing movement
+    printf("\nHead movement:\n");
+
+    // If moving to the right (higher track numbers)
+    if (dir == 1) {
+        // Move from current head to the rightmost request
+        for (int i = pos; i < n - 1; i++) {
+            int diff = abs(RQ[i + 1] - RQ[i]);
+            printf("Move from %d to %d [Moved %d]\n", RQ[i], RQ[i + 1], diff);
+            total += diff;
+        }
+
+        // Jump from end (199) to start (0)
+        int jump = RQ[n - 1];  // 199
+        printf("Jump from %d to 0 [Moved %d]\n", RQ[n - 1], jump);
+        total += jump;
+
+        // Move from start (0) to the leftmost request before head
+        for (int i = 0; i < pos; i++) {
+            int diff = abs(RQ[i + 1] - RQ[i]);
+            printf("Move from %d to %d [Moved %d]\n", RQ[i], RQ[i + 1], diff);
+            total += diff;
+        }
+
+    } else {
+        // Moving to the left (lower track numbers)
+
+        // Move from current head to the lowest request
+        for (int i = pos; i > 0; i--) {
+            int diff = abs(RQ[i] - RQ[i - 1]);
+            printf("Move from %d to %d [Moved %d]\n", RQ[i], RQ[i - 1], diff);
+            total += diff;
+        }
+
+        // Jump from 0 to end of disk
+        int jump = size - 1;
+        printf("Jump from 0 to %d [Moved %d]\n", jump, jump);
+        total += jump;
+
+        // Continue from end down to the requests after head
+        for (int i = n - 1; i > pos; i--) {
+            int diff = abs(RQ[i] - RQ[i - 1]);
+            printf("Move from %d to %d [Moved %d]\n", RQ[i], RQ[i - 1], diff);
+            total += diff;
+        }
+    }
+
+    // Print total head movement
+    printf("\nTotal head movement: %d\n", total);
+    return 0;
+}
