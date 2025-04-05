@@ -1,0 +1,87 @@
+#include <stdio.h>
+
+int main() {
+    int i, j, n, a[50], frame[10], no, k, count = 0;
+    int recent[10]; // To track when each frame was last used
+    int time = 0;   // Global counter for time steps
+
+    printf("Enter the number of pages: ");
+    scanf("%d", &n);
+
+    printf("Enter the page numbers: ");
+    for(i = 1; i <= n; i++) {
+        scanf("%d", &a[i]);
+    }
+
+    printf("Enter the number of frames: ");
+    scanf("%d", &no);
+
+    for(i = 0; i < no; i++) {
+        frame[i] = -1;  // initialize all frames as empty
+        recent[i] = 0;  // initialize usage time
+    }
+
+    printf("\nRef_String\tPage_Frames\n");
+
+    for(i = 1; i <= n; i++) {
+        int found = 0;
+
+        // Check if page is already in frame
+        for(j = 0; j < no; j++) {
+            if(frame[j] == a[i]) {
+                found = 1;
+                time++;
+                recent[j] = time; // update recent use
+                break;
+            }
+        }
+
+        // If page not found → Page Fault
+        if(found == 0) {
+            int pos = -1;
+
+            // Find an empty frame
+            for(j = 0; j < no; j++) {
+                if(frame[j] == -1) {
+                    pos = j;
+                    break;
+                }
+            }
+
+            // If no empty frame, find least recently used
+            if(pos == -1) {
+                int lru = recent[0];
+                pos = 0;
+                for(j = 1; j < no; j++) {
+                    if(recent[j] < lru) {
+                        lru = recent[j];
+                        pos = j;
+                    }
+                }
+            }
+
+            // Replace with new page
+            frame[pos] = a[i];
+            time++;
+            recent[pos] = time;
+            count++;
+
+            // Print frame content
+            printf("%d\t\t", a[i]);
+            for(k = 0; k < no; k++) {
+                if(frame[k] != -1)
+                    printf("%d\t", frame[k]);
+                else
+                    printf("-\t");
+            }
+        } else {
+            // If it's a hit, just print frame state (no fault)
+            printf("%d\t\t", a[i]);
+        }
+
+        printf("\n");
+    }
+
+    printf("\nTotal Page Faults: %d\n", count);
+    return 0;
+}
