@@ -1,0 +1,13 @@
+//Behavioral Model
+
+module ha(sum, carry, a, b);
+  output sum, carry;
+  input a, b;
+  reg sum, carry;
+
+  always @(a or b) begin
+    sum = a ^ b;
+    carry = a & b;
+  end
+
+endmodule
