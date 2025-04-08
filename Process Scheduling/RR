@@ -1,0 +1,82 @@
+#include <stdio.h>
+
+int main() {
+    int n, i, time = 0, tq;
+    int bt[10], rt[10], wt[10] = {0}, tat[10];
+    int queue[100], porder[100]; // To record Gantt chart
+    int idx = 0;
+
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    printf("Enter burst time for each process:\n");
+    for(i = 0; i < n; i++) {
+        printf("P%d: ", i+1);
+        scanf("%d", &bt[i]);
+        rt[i] = bt[i];
+    }
+
+    printf("Enter time quantum: ");
+    scanf("%d", &tq);
+
+    int done;
+    do {
+        done = 1;
+        for(i = 0; i < n; i++) {
+            if(rt[i] > 0) {
+                done = 0;
+
+                // Store process number and start time for Gantt Chart
+                porder[idx] = i + 1;
+
+                if(rt[i] > tq) {
+                    time += tq;
+                    rt[i] -= tq;
+                } else {
+                    time += rt[i];
+                    wt[i] = time - bt[i];
+                    rt[i] = 0;
+                }
+
+                queue[idx] = time; // record time checkpoint
+                idx++;
+            }
+        }
+    } while(!done);
+
+    // Print Table
+    printf("\nProcess\tBT\tWT\tTAT\n");
+    for(i = 0; i < n; i++) {
+        tat[i] = bt[i] + wt[i];
+        printf("P%d\t%d\t%d\t%d\n", i+1, bt[i], wt[i], tat[i]);
+    }
+
+    // Gantt Chart
+    printf("\nGantt Chart:\n");
+
+    // Top bar
+    for(i = 0; i < idx; i++) {
+        printf("-------");
+    }
+    printf("\n|");
+
+    // Process sequence
+    for(i = 0; i < idx; i++) {
+        printf(" P%d |", porder[i]);
+    }
+    printf("\n");
+
+    // Bottom bar
+    for(i = 0; i < idx; i++) {
+        printf("-------");
+    }
+
+    // Time values
+    printf("\n0");
+    for(i = 0; i < idx; i++) {
+        printf("     %d", queue[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
