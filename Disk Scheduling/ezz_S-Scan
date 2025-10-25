@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>  // for abs() function
+
+int main() {
+    int i, j, n, head, size, dir, total = 0;
+    int req[50], left[50], right[50], temp;
+    int lcount = 0, rcount = 0, order[100], idx = 0;
+
+    // --- Input Section ---
+    printf("Enter the number of requests: ");
+    scanf("%d", &n);
+
+    printf("Enter the request sequence: ");
+    for(i = 0; i < n; i++)
+        scanf("%d", &req[i]);
+
+    printf("Enter disk size: ");
+    scanf("%d", &size);
+
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter direction (0: left to right, 1: right to left): ");
+    scanf("%d", &dir);
+
+    // --- Divide requests into two sides ---
+    for(i = 0; i < n; i++) {
+        if(req[i] < head)
+            left[lcount++] = req[i];
+        else
+            right[rcount++] = req[i];
+    }
+
+    // --- Sort both sides (Bubble sort) ---
+    for(i = 0; i < lcount-1; i++)
+        for(j = 0; j < lcount-i-1; j++)
+            if(left[j] > left[j+1]) {
+                temp = left[j];
+                left[j] = left[j+1];
+                left[j+1] = temp;
+            }
+
+    for(i = 0; i < rcount-1; i++)
+        for(j = 0; j < rcount-i-1; j++)
+            if(right[j] > right[j+1]) {
+                temp = right[j];
+                right[j] = right[j+1];
+                right[j+1] = temp;
+            }
+
+    // --- Build the service order based on direction ---
+    if(dir == 0) { // moving right first
+        for(i = 0; i < rcount; i++)
+            order[idx++] = right[i];
+        order[idx++] = size - 1;  // go to end
+        for(i = lcount - 1; i >= 0; i--)
+            order[idx++] = left[i];
+    } else { // moving left first
+        for(i = lcount - 1; i >= 0; i--)
+            order[idx++] = left[i];
+        order[idx++] = 0;  // go to start
+        for(i = 0; i < rcount; i++)
+            order[idx++] = right[i];
+    }
+
+    // --- Calculate and show head movements ---
+    printf("\nHead movement sequence:\n");
+    printf("%d", head); // starting position
+
+    for(i = 0; i < idx; i++) {
+        total += abs(order[i] - head);  // movement distance
+        printf(" -> %d", order[i]);     // print step
+        head = order[i];                // move head
+    }
+
+    // --- Final output ---
+    printf("\nTotal disk movement: %d\n", total);
+
+    return 0;
+}
