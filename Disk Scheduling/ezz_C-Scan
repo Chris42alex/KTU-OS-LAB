@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>  // for abs()
+
+int main() {
+    int i, j, n, head, size, dir, total = 0;
+    int req[50], left[50], right[50], temp;
+    int lcount = 0, rcount = 0, order[100], idx = 0;
+
+    // --- Input Section ---
+    printf("Enter the number of requests: ");
+    scanf("%d", &n);
+
+    printf("Enter the request sequence: ");
+    for(i = 0; i < n; i++)
+        scanf("%d", &req[i]);
+
+    printf("Enter disk size: ");
+    scanf("%d", &size);
+
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter direction (0: left to right, 1: right to left): ");
+    scanf("%d", &dir);
+
+    // --- Divide requests into two sides ---
+    for(i = 0; i < n; i++) {
+        if(req[i] < head)
+            left[lcount++] = req[i];
+        else
+            right[rcount++] = req[i];
+    }
+
+    // --- Sort both sides ---
+    for(i = 0; i < lcount-1; i++)
+        for(j = 0; j < lcount-i-1; j++)
+            if(left[j] > left[j+1]) {
+                temp = left[j];
+                left[j] = left[j+1];
+                left[j+1] = temp;
+            }
+
+    for(i = 0; i < rcount-1; i++)
+        for(j = 0; j < rcount-i-1; j++)
+            if(right[j] > right[j+1]) {
+                temp = right[j];
+                right[j] = right[j+1];
+                right[j+1] = temp;
+            }
+
+    // --- Build the order based on direction ---
+    if(dir == 0) { // moving right first
+        // service all right-side requests
+        for(i = 0; i < rcount; i++)
+            order[idx++] = right[i];
+
+        // reach the end of disk
+        order[idx++] = size - 1;
+
+        // jump back to start (circular)
+        order[idx++] = 0;
+
+        // then service the left-side requests
+        for(i = 0; i < lcount; i++)
+            order[idx++] = left[i];
+    }
+    else { // moving left first
+        // service all left-side requests (in reverse)
+        for(i = lcount - 1; i >= 0; i--)
+            order[idx++] = left[i];
+
+        // reach the beginning
+        order[idx++] = 0;
+
+        // jump to the end (circular)
+        order[idx++] = size - 1;
+
+        // then service right-side requests (from high to low)
+        for(i = rcount - 1; i >= 0; i--)
+            order[idx++] = right[i];
+    }
+
+    // --- Calculate and show head movements ---
+    printf("\nHead movement sequence:\n");
+    printf("%d", head); // starting position
+
+    for(i = 0; i < idx; i++) {
+        total += abs(order[i] - head);
+        printf(" -> %d", order[i]);
+        head = order[i];
+    }
+
+    printf("\nTotal disk movement: %d\n", total);
+
+    return 0;
+}
